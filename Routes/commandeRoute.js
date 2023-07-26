@@ -36,6 +36,24 @@ const authentification = async (req, res, next) => {
   });
 };
 
+
+const genererContenuTableauHTML = (donnees,prix) => {
+  let contenuHTML =
+    '<table border="1" style="width: 100%; border-collapse: collapse; font-size: 16px;">';
+  contenuHTML +=
+    "<tr><th style='background-color: #f2f2f2; padding: 10px;'>Nom</th><th style='background-color: #f2f2f2; padding: 10px;'>Prix (dt)</th><th style='background-color: #f2f2f2; padding: 10px;'>Quantité</th></tr>";
+
+  donnees.forEach((personne) => {
+    contenuHTML += `<tr><td>${personne.nom}</td><td>${personne.price}</td><td>${personne.quantité}</td></tr>`;
+  });
+ contenuHTML +=
+   '<tfoot><tr><td colspan="3" style="text-align: center; background-color: #f2f2f2; padding: 10px;">';
+   contenuHTML += ` Montant total :${prix} dinars`;
+     contenuHTML += "</td></tr></tfoot>";
+  contenuHTML += "</table>";
+  return contenuHTML;
+};
+
 Route.post("/achatProduits", authentification,async(req,res)=>{
 
   try {
@@ -48,6 +66,14 @@ Route.post("/achatProduits", authentification,async(req,res)=>{
       await find.save()
     }
    })
+
+   const mailOptions = {
+     from: process.env.EMAIL_ADDRESS,
+     to: req.client.email,
+     subject: ` hello ${req.client.name} voilà votre Commande liste d'achats sur notre site (testing API)`,
+     html: genererContenuTableauHTML(req.body.pannier,req.body.prix_total),
+   };
+    await sendEmail(mailOptions);
    res.status(200).send(` hello ${req.client.name} ! félécitation achat effectué avec succés`)
 
   } catch (error) {

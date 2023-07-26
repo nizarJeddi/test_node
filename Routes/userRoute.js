@@ -85,7 +85,7 @@ Route.post("/login",async(req,res)=>{
        jwt.sign(
          { email: user.email },
          secretCode,
-         { expiresIn: "10m" },
+         { expiresIn: "30m" },
          async (err, result) => {
            if (err) {
              res
