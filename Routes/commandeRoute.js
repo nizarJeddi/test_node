@@ -52,6 +52,7 @@ Route.post("/achatProduits", authentification,async(req,res)=>{
 
   } catch (error) {
     console.log(error);
+    //erreuur
   }
 
 
