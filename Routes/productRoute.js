@@ -17,5 +17,21 @@ Route.post("/addproduct",async(req,res)=>{
     console.log(error);
   }
 })
+Route.put("/addQuantity/:id",async(req,res)=>{
+  try {
+    const {quantité}=req.body;
+    const {id}=req.params
+    const product=await Product.findById(id);
+    if (!product) {
+      res.status(400).send("produit non trouvé ;vérifiez l'id de produit");
+    };
+     product.set({ ...product, quantity:quantité });
+     const modifiedProduct=await product.save();
+     res.status(200).send({message:`quantité de produit : ${product.name} a été mise à jour avec succés`,produit_Modifié:modifiedProduct})
+
+  } catch (error) {
+    console.log(error);
+  }
+})
 
 module.exports = Route; 

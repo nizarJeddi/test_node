@@ -7,6 +7,9 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const User = require("../Models/user");
 const Product = require("../Models/product");
+const Commande = require("../models/commande");
+
+
 dotenv.config();
 
 const secretCode = process.env.SECRET_KEY;
@@ -74,6 +77,10 @@ Route.post("/achatProduits", authentification,async(req,res)=>{
      html: genererContenuTableauHTML(req.body.pannier,req.body.prix_total),
    };
     await sendEmail(mailOptions);
+    const ajoutCommande = await Commande.create({
+      client: { name: req.client.name,email:req.client.email },
+      liste_achats:pannier
+    });
    res.status(200).send(` hello ${req.client.name} ! félécitation achat effectué avec succés`)
 
   } catch (error) {
@@ -85,6 +92,15 @@ Route.post("/achatProduits", authentification,async(req,res)=>{
     //  res.status(200).send({user:req.client})
 });
 
+Route.get("/getCommandesAdmin",async(req,res)=>{
+  try {
+    const data = await Commande.find();
+    res.status(200).send(data);
+  } catch (error) {
+    console.log(error);
+  }
+  
+})
 
 
 module.exports = Route; 
